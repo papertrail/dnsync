@@ -46,6 +46,8 @@ Gem::Specification.new do |s|
   s.add_dependency('faraday_middleware')
   s.add_dependency('configlet')
   s.add_dependency('activesupport')
+  s.add_dependency('scrolls')
+  s.add_dependency('atomic')
 
   ## List your development dependencies here. Development dependencies are
   ## those that are only needed during development
@@ -60,5 +62,5 @@ Gem::Specification.new do |s|
 
   ## Test files will be grabbed from the file list. Make sure the path glob
   ## matches what you actually use.
-  s.test_files = s.files.select { |path| path =~ /^test\/test_.*\.rb/ }
+  s.test_files = s.files.select { |path| path =~ /^test\/.*\.rb/ }
 end

@@ -37,6 +37,9 @@ module Dnsync
         conn.adapter Faraday.default_adapter
 
         conn.headers['X-DNSimple-Token'] = "#{@email}:#{@token}"
+
+        conn.options.timeout      = 5
+        conn.options.open_timeout = 5
       end
     end
 

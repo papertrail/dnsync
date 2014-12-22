@@ -1,11 +1,13 @@
 require 'optparse'
 require 'configlet'
 require 'pp'
+require 'scrolls'
 
 require 'dnsync/dnsimple'
 require 'dnsync/nsone'
 require 'dnsync/zone_difference'
 require 'dnsync/zone_updater'
+require 'dnsync/recurring_zone_updater'
 
 module Dnsync
   class Cli
@@ -51,6 +53,8 @@ module Dnsync
         diff
       when 'sync'
         sync
+      when 'monitor'
+        monitor
       else
         puts "Unknown command: #{command}"
         puts opts
@@ -97,17 +101,52 @@ module Dnsync
       dnsimple = Dnsimple.new(Configlet[:dnsimple_email],
         Configlet[:dnsimple_token], Configlet[:domain])
 
-      diff = ZoneDifference.new(nsone.zone, dnsimple.zone,
+      nsone_zone, dnsimple_zone = nil
+
+      Scrolls.log(:zone => Configlet[:domain], :from => :nsone) do
+        nsone_zone = nsone.zone
+      end
+
+      Scrolls.log(:zone => Configlet[:domain], :from => :dnsimple) do
+        dnsimple_zone = dnsimple.zone
+      end
+
+      diff = ZoneDifference.new(nsone_zone, dnsimple_zone,
         %w(NS SOA))
 
-      puts "Adding: #{diff.added.length} Updating: #{diff.changed.length} Removing: #{diff.removed.length}"
-
       if Configlet[:noop]
-        puts "Skipping synchronization"
+        puts "Would be: Adding: #{diff.added.length} Updating: #{diff.changed.length} Removing: #{diff.removed.length}"
       else
         updater = ZoneUpdater.new(diff, nsone)
-        updater.call
+
+        Scrolls.log(:zone => Configlet[:domain], :action => :updating, :to => :nsone,
+          :adding => diff.added.length, :updating => diff.changed.length,
+          :removing => diff.removed.length) do
+          updater.call
+        end
       end
+    end
+
+    def monitor
+      nsone = Nsone.new(Configlet[:nsone_token], Configlet[:domain])
+      dnsimple = Dnsimple.new(Configlet[:dnsimple_email],
+        Configlet[:dnsimple_token], Configlet[:domain])
+
+      updater = RecurringZoneUpdater.new(dnsimple, nsone, 10)
+      updater.start
+
+      rd, wr = IO.pipe
+      Thread.new do
+        # Wait for a signal
+        rd.read(1)
+        updater.stop
+      end
+
+      %w(QUIT HUP INT TERM).each do |sig|
+        Signal.trap(sig) { wr.write('x') }
+      end
+
+      updater.join
     end
 
     private
