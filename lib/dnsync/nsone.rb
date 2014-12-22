@@ -55,5 +55,47 @@ module Dnsync
       
       Record.new(record['domain'], record['type'], record['ttl'], answers)
     end
+
+    def create_record(record)
+      answers = record.answers.map do |answer|
+        if answer.priority
+          { :answer => [ answer.priority, answer.content ] }
+        else
+          { :answer => [ answer.content ] }
+        end
+      end
+
+      connection.put("zones/#{@domain}/#{record.name}/#{record.type}") do |req|
+        req.body = {
+          :type => record.type,
+          :zone => @domain,
+          :domain => record.name,
+          :answers => answers
+        }
+      end
+    end
+
+    def update_record(record)
+      answers = record.answers.map do |answer|
+        if answer.priority
+          { :answer => [ answer.priority, answer.content ] }
+        else
+          { :answer => [ answer.content ] }
+        end
+      end
+
+      connection.post("zones/#{@domain}/#{record.name}/#{record.type}") do |req|
+        req.body = {
+          :type => record.type,
+          :zone => @domain,
+          :domain => record.name,
+          :answers => answers
+        }
+      end
+    end
+
+    def remove_record(record)
+      connection.delete("zones/#{@domain}/#{record.name}/#{record.type}")
+    end
   end
 end
