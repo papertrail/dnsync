@@ -71,7 +71,8 @@ module Dnsync
       dnsimple = Dnsimple.new(Configlet[:dnsimple_email], 
         Configlet[:dnsimple_token], Configlet[:domain])
       
-      diff = ZoneDifference.new(nsone.zone, dnsimple.zone)
+      diff = ZoneDifference.new(nsone.zone, dnsimple.zone,
+        %w(NS SOA))
 
       puts " ---- added ---- "
       pp diff.added
