@@ -1,3 +1,5 @@
+require 'active_support/core_ext/object/blank'
+
 require 'dnsync/answer'
 require 'dnsync/record_identifier'
 
@@ -38,5 +40,7 @@ module Dnsync
     def hash
       [ identifier, ttl, answers ].hash
     end
+
+    alias_method :eql?, :==
   end
 end

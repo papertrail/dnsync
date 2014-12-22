@@ -1,3 +1,5 @@
+require 'active_support/core_ext/object/blank'
+
 module Dnsync
   class RecordIdentifier
     include Comparable
@@ -26,5 +28,7 @@ module Dnsync
     def hash
       [ name, type ].hash
     end
+
+    alias_method :eql?, :==
   end
 end

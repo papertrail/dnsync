@@ -22,5 +22,7 @@ module Dnsync
     def hash
       [ content, priority ].hash
     end
+
+    alias_method :eql?, :==
   end
 end

@@ -34,3 +34,4 @@ PLATFORMS
 
 DEPENDENCIES
   dynsync!
+  minitest

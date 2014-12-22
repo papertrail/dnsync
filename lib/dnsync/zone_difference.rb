@@ -24,7 +24,7 @@ module Dnsync
           updated_record  = @updated[identifier]
         
           if original_record != updated_record
-            updated_record
+            [ original_record, updated_record ]
           else
             nil
           end

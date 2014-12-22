@@ -7,7 +7,7 @@ module Dnsync
     attr_reader :name
 
     def initialize(name, records)
-      @name    = name
+      @name = name
 
       @records_by_identifier = {}
       records.each do |record|

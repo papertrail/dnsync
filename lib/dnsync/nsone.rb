@@ -15,7 +15,7 @@ module Dnsync
     
     def connection
       @connection ||= Faraday.new('https://api.nsone.net/v1/') do |conn|
-        conn.request :url_encoded # form-encode POST params
+        conn.request :json # form-encode POST params
 
         # conn.response :logger
         conn.response :raise_error
@@ -67,9 +67,10 @@ module Dnsync
 
       connection.put("zones/#{@domain}/#{record.name}/#{record.type}") do |req|
         req.body = {
-          :type => record.type,
-          :zone => @domain,
-          :domain => record.name,
+          :type    => record.type,
+          :zone    => @domain,
+          :domain  => record.name,
+          :ttl     => record.ttl,
           :answers => answers
         }
       end
@@ -86,9 +87,10 @@ module Dnsync
 
       connection.post("zones/#{@domain}/#{record.name}/#{record.type}") do |req|
         req.body = {
-          :type => record.type,
-          :zone => @domain,
-          :domain => record.name,
+          :type    => record.type,
+          :zone    => @domain,
+          :domain  => record.name,
+          :ttl     => record.ttl,
           :answers => answers
         }
       end
