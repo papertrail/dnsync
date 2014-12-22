@@ -7,32 +7,38 @@ module Dnsync
     end
     
     def added
-      added_identifiers = @updated.record_identifiers - @original.record_identifiers
-      added_identifiers = filter_types(added_identifiers)
-      @updated.records_at(added_identifiers)
+      @added ||= begin
+        added_identifiers = @updated.record_identifiers - @original.record_identifiers
+        added_identifiers = filter_types(added_identifiers)
+        @updated.records_at(added_identifiers)
+      end
     end
     
     def changed
-      overlapping_identifiers = @updated.record_identifiers & @original.record_identifiers
-      overlapping_identifiers = filter_types(overlapping_identifiers)
+      @changed ||= begin
+        overlapping_identifiers = @updated.record_identifiers & @original.record_identifiers
+        overlapping_identifiers = filter_types(overlapping_identifiers)
       
-      overlapping_identifiers.map do |identifier|
-        original_record = @original[identifier]
-        updated_record  = @updated[identifier]
+        overlapping_identifiers.map do |identifier|
+          original_record = @original[identifier]
+          updated_record  = @updated[identifier]
         
-        if original_record != updated_record
-          updated_record
-        else
-          nil
-        end
-      end.compact
+          if original_record != updated_record
+            updated_record
+          else
+            nil
+          end
+        end.compact
+      end
     end
     
     def removed
-      removed_identifiers = @original.record_identifiers - @updated.record_identifiers
-      removed_identifiers = filter_types(removed_identifiers)
+      @removed ||= begin
+        removed_identifiers = @original.record_identifiers - @updated.record_identifiers
+        removed_identifiers = filter_types(removed_identifiers)
 
-      @original.records_at(removed_identifiers)
+        @original.records_at(removed_identifiers)
+      end
     end
 
     def filter_types(identifiers)

@@ -5,6 +5,7 @@ require 'pp'
 require 'dnsync/dnsimple'
 require 'dnsync/nsone'
 require 'dnsync/zone_difference'
+require 'dnsync/zone_updater'
 
 module Dnsync
   class Cli
@@ -14,6 +15,8 @@ module Dnsync
     
     def call
       Configlet.prefix = 'dnsync'
+      Configlet.munge(:noop) { |v| v == "true" }
+
       read_env_from_file(File.expand_path("~/.dnsync.env"))
       read_env_from_file(File.expand_path("../../../.env", __FILE__))
       read_env_from_file('.env')
@@ -31,6 +34,9 @@ module Dnsync
         opts.on("--domain=DOMAIN", "Domain to synchronize") do |v|
           Configlet[:domain] = v
         end
+        opts.on("--noop", "Don't do any write operations") do |v|
+          Configlet[:noop] = v.to_s
+        end
         opts.on("-h", "--help", "This help message") do
           puts opts
           exit(1)
@@ -43,6 +49,8 @@ module Dnsync
         dump
       when 'diff'
         diff
+      when 'sync'
+        sync
       else
         puts "Unknown command: #{command}"
         puts opts
@@ -84,6 +92,24 @@ module Dnsync
       pp diff.changed
     end
     
+    def sync
+      nsone = Nsone.new(Configlet[:nsone_token], Configlet[:domain])
+      dnsimple = Dnsimple.new(Configlet[:dnsimple_email],
+        Configlet[:dnsimple_token], Configlet[:domain])
+
+      diff = ZoneDifference.new(nsone.zone, dnsimple.zone,
+        %w(NS SOA))
+
+      puts "Adding: #{diff.added.length} Updating: #{diff.changed.length} Removing: #{diff.removed.length}"
+
+      if Configlet[:noop]
+        puts "Skipping synchronization"
+      else
+        updater = ZoneUpdater.new(diff, nsone)
+        updater.call
+      end
+    end
+
     private
     def unindent(string)
       indentation = string[/\A\s*/]
