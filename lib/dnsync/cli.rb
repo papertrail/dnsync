@@ -21,6 +21,7 @@ module Dnsync
     def call
       Configlet.prefix = 'dnsync'
       Configlet.munge(:noop) { |v| v == "true" }
+      Configlet.munge(:monitor_frequency) { |v| v.to_i }
 
       read_env_from_file(File.expand_path("~/.dnsync.env"))
       read_env_from_file(File.expand_path("../../../.env", __FILE__))
@@ -46,6 +47,9 @@ module Dnsync
         end
         opts.on("--domain=DOMAIN", "Domain to synchronize") do |v|
           Configlet[:domain] = v
+        end
+        opts.on("--monitor-frequency=FREQUENCY", "Frequency to check DNSimple for updates") do |v|
+          Configlet[:monitor_frequency] = v
         end
         opts.on("--noop", "Don't do any write operations") do |v|
           Configlet[:noop] = v.to_s
