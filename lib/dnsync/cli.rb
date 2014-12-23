@@ -41,7 +41,7 @@ module Dnsync
         opts.on("--dnsimple-token=TOKEN", "DNSimple token") do |v|
           Configlet[:dnsimple_token] = v
         end
-        opts.on("--nsone-token=TOKEN", "NSOne token") do |v|
+        opts.on("--nsone-token=TOKEN", "NSONE token") do |v|
           Configlet[:nsone_token] = v
         end
         opts.on("--domain=DOMAIN", "Domain to synchronize") do |v|

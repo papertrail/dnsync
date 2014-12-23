@@ -52,7 +52,7 @@ Alternately, the environment variables `DNSYNC_DNSIMPLE_EMAIL` and
 To authenticate against NSONE, the command line arguments are:
 
 ```
-        --nsone-token=TOKEN          NSOne token
+        --nsone-token=TOKEN          NSONE token
 ```
 
 ## USING
