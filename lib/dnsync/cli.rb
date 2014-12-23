@@ -11,8 +11,11 @@ require 'dnsync/recurring_zone_updater'
 
 module Dnsync
   class Cli
+    attr_reader :program_name
+
     def initialize(argv)
-      @args = argv.dup
+      @args         = argv.dup
+      @program_name = File.basename($0)
     end
     
     def call
@@ -24,6 +27,14 @@ module Dnsync
       read_env_from_file('.env')
 
       opts = OptionParser.new do |opts|
+        opts.banner = "usage: #{program_name} [options] <command> [<args>]"
+
+        opts.separator ""
+        opts.separator commands_help
+
+        opts.separator ""
+        opts.separator "Options:"
+
         opts.on("--dnsimple-email=EMAIL", "DNSimple email address") do |v|
           Configlet[:dnsimple_email] = v
         end
@@ -56,14 +67,22 @@ module Dnsync
       when 'monitor'
         monitor
       else
-        puts "Unknown command: #{command}"
-        puts opts
+        puts "#{program_name}: '#{command}' is not a command. see '#{program_name} --help'."
         exit(1)
       end
       
       exit(0)
     end
     
+    def commands_help
+      unindent(<<-EOF)
+        The available commands are:
+             sync         Perform a one-time synchronization from DNSimple to NSONE
+             monitor      Perform continual synchronization from DNSimple to NSONE
+
+      EOF
+    end
+
     def dump
       case command = @args.shift
       when 'nsone'

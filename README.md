@@ -1,69 +1,81 @@
-RakeGem
-=======
+# Ddnsync
 
-# DESCRIPTION
 
-Ever wanted to manage your RubyGem in a sane way without having to resort to
-external dependencies like Jeweler or Hoe? Ever thought that Rake and a hand
-crafted gemspec should be enough to deal with these problems? If so, then
-RakeGem is here to make your life awesome!
+## DESCRIPTION
 
-RakeGem is not a library. It is just a few simple file templates that you can
-copy into your project and easily customize to match your specific needs. It
-ships with a few Rake tasks to help you keep your gemspec up-to-date, build
-a gem, and release your library and gem to the world.
+Dnsync provides a simple way to replicate records from DNSimple to NSONE.
 
-RakeGem assumes you are using Git. This makes the Rake tasks easy to write. If
-you are using something else, you should be able to get RakeGem up and running
-with your system without too much editing.
+## INSTALLATION
 
-The RakeGem tasks were inspired by the
-[Sinatra](http://github.com/sinatra/sinatra) project.
+    $ gem install dnsync
 
-# INSTALLATION
 
-Take a look at `Rakefile` and `NAME.gemspec`. For new projects, you can start
-with these files and edit a few lines to make them fit into your library. If
-you have an existing project, you'll probably want to take the RakeGem
-versions and copy any custom stuff from your existing Rakefile and gemspec
-into them. As long as you're careful, the rake tasks should keep working.
 
-# ASSUMPTIONS
+## Authentication
 
-RakeGem makes a few assumptions. You will either need to satisfy these
-assumptions or modify the rake tasks to work with your setup.
+Authentication can be provided either by command line arguments, environment
+variables, or environment variable files.
 
-You should have a file named `lib/NAME.rb` (where NAME is the name of your
-library) that contains a version line. It should look something like this:
+Environment variable files are files that contain a list of enviroment variable
+name value pairs, like:
 
-    module NAME
-      VERSION = '0.1.0'
-    end
+```
+DNSYNC_DNSIMPLE_EMAIL=user@email.com
+DNSYNC_DNSIMPLE_TOKEN=xxxxxxxxxx
+```
 
-It is important that you use the constant `VERSION` and that it appear on a
-line by itself.
+The files are looked for in:
 
-# UPDATING THE VERSION
+* `$HOME/dnsync.env`
+* `<dnsync-code-root>/.env`
+* `$PWD/.env`
 
-In order to make a new release, you'll want to update the version. With
-RakeGem, you only need to do that in the `lib/NAME.rb` file. Everything else
-will use this find the canonical version of the library.
 
-# TASKS
+### DNSimple
 
-RakeGem provides three rake tasks:
+To authenticate against DNSimple, the command line arguments are:
 
-`rake gemspec` will update your gemspec with the latest version (taken from
-the `lib/NAME.rb` file) and file list (as reported by `git ls-files`).
+```
+        --dnsimple-email=EMAIL       DNSimple email address
+        --dnsimple-token=TOKEN       DNSimple token
+```
 
-`rake build` will update your gemspec, build your gemspec into a gem, and
-place it in the `pkg` directory.
+Alternately, the environment variables `DNSYNC_DNSIMPLE_EMAIL` and
+`DNSYNC_DNSIMPLE_TOKEN` can be used.
 
-`rake release` will update your gemspec, build your gem, make a commit with
-the message `Release 0.1.0` (with the correct version, obviously), tag the
-commit with `v0.1.0` (again with the correct version), and push the `master`
-branch and new tag to `origin`.
+### NSONE
 
-Keep in mind that these are just simple Rake tasks and you can edit them
-however you please. Don't want to auto-commit or auto-push? Just delete those
-lines. You can bend RakeGem to your own needs. That's the whole point!
+To authenticate against NSONE, the command line arguments are:
+
+```
+        --nsone-token=TOKEN          NSOne token
+```
+
+## USING
+
+### Getting a zone dump
+
+To get a zone dump from DNSimple:
+
+    $ dnsync --domain=domain.com dump dnsimple
+
+To get a zone dump from NSONE:
+
+    $ dnsync --domain=domain.com dump nsone
+
+
+
+### Doing a one-time synchronization
+
+To do a one-time synchronization:
+
+    $ dnsync --domain=domain.com sync
+
+
+### Monitoring a DNSimple zone for changes
+
+To monitor a DNSimple domain for changes and automatically propagate the
+changes to NSONE:
+
+    $ dnsync --domain=domain.com monitor
+
