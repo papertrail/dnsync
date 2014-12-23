@@ -1,14 +1,18 @@
 # Ddnsync
 
-
-## DESCRIPTION
-
 Dnsync provides a simple way to replicate records from DNSimple to NSONE.
 
-## INSTALLATION
+## Installation
 
     $ gem install dnsync
 
+or to install a prerelease, add to your `Gemfile`:
+
+    gem 'dnsync', :git => 'git://github.com/papertrail/dnsync.git'
+
+and use:
+
+    $ bundle exec dnsync
 
 
 ## Authentication
