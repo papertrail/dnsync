@@ -109,8 +109,13 @@ Alternatively, the environment variable `DNSYNC_NSONE_TOKEN` is used.
 
 ## Running on Heroku
 
-Heroku provides a simple place to run synchronization. The process for 
-getting a synchronizer up and running is:
+Heroku provides a simple place to run synchronization.
+
+To get up and running with very little effort, click the button:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/papertrail/dnsync-heroku)
+
+To get the synchronizer up and running by hand:
 
 ### 1. Create a new directory for the heroku app:
 
