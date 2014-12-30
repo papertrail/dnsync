@@ -124,7 +124,7 @@ getting a synchronizer up and running is:
 
     $ echo 'web: bundle exec dnsync --status-port=$PORT monitor' >> Procfile
 
-### 4. Commit thec hanges:
+### 4. Commit the changes:
 
     $ git add Gemfile Gemfile.lock Procfile
     $ git commit -m 'Setting up dnsync'
