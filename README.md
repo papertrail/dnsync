@@ -124,7 +124,7 @@ getting a synchronizer up and running is:
 ### 2. Create a basic ruby project:
 
     $ bundle init
-    $ echo "gem 'dnsync', :git => 'git://github.com/papertrail/dnsync.git'" >> Gemfile
+    $ echo "gem 'dnsync'" >> Gemfile
     $ bundle
 
 ### 3. Create a `Procfile` to run the worker:
