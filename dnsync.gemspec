@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   ## the sub! line in the Rakefile
   s.name              = 'dnsync'
   s.version           = '1.0.0'
-  s.date              = '2010-01-01'
+  s.date              = '2014-12-30'
 
   ## Make sure your summary is short. The description may be as long
   ## as you like.
@@ -57,7 +57,29 @@ Gem::Specification.new do |s|
   ## contents of your Git repository via the gemspec task. DO NOT REMOVE
   ## THE MANIFEST COMMENTS, they are used as delimiters by the task.
   # = MANIFEST =
-  s.files = %w[]
+  s.files = %w[
+    Gemfile
+    LICENSE
+    README.md
+    Rakefile
+    bin/dnsync
+    dnsync.gemspec
+    lib/dnsync.rb
+    lib/dnsync/answer.rb
+    lib/dnsync/cli.rb
+    lib/dnsync/dnsimple.rb
+    lib/dnsync/http_status.rb
+    lib/dnsync/nsone.rb
+    lib/dnsync/record.rb
+    lib/dnsync/record_identifier.rb
+    lib/dnsync/recurring_zone_updater.rb
+    lib/dnsync/zone.rb
+    lib/dnsync/zone_difference.rb
+    lib/dnsync/zone_updater.rb
+    test/record_identifier_test.rb
+    test/record_test.rb
+    test/test_helper.rb
+  ]
   # = MANIFEST =
 
   ## Test files will be grabbed from the file list. Make sure the path glob
