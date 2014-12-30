@@ -8,6 +8,7 @@ require 'dnsync/nsone'
 require 'dnsync/zone_difference'
 require 'dnsync/zone_updater'
 require 'dnsync/recurring_zone_updater'
+require 'dnsync/http_status'
 
 module Dnsync
   class Cli
@@ -21,7 +22,7 @@ module Dnsync
     def call
       Configlet.prefix = 'dnsync'
       Configlet.munge(:noop) { |v| v == "true" }
-      Configlet.munge(:monitor_frequency) { |v| v.to_i }
+      Configlet.munge(:monitor_frequency) { |v| v.present? ? v.to_i : v }
 
       read_env_from_file(File.expand_path("~/.dnsync.env"))
       read_env_from_file(File.expand_path("../../../.env", __FILE__))
@@ -50,6 +51,9 @@ module Dnsync
         end
         opts.on("--monitor-frequency=FREQUENCY", "Frequency to check DNSimple for updates") do |v|
           Configlet[:monitor_frequency] = v
+        end
+        opts.on("--status-port=PORT", "Port to run status HTTP server on") do |v|
+          Configlet[:status_port] = "8008"
         end
         opts.on("--noop", "Don't do any write operations") do |v|
           Configlet[:noop] = v.to_s
@@ -155,14 +159,25 @@ module Dnsync
       dnsimple = Dnsimple.new(Configlet[:dnsimple_email],
         Configlet[:dnsimple_token], Configlet[:domain])
 
-      updater = RecurringZoneUpdater.new(dnsimple, nsone, 10)
+      updater = RecurringZoneUpdater.new(dnsimple, nsone,
+        Configlet[:monitor_frequency] || 10)
       updater.start
+
+      if status_port = Configlet[:status_port]
+        puts "Starting status server on #{status_port}"
+        status = HttpStatus.new(status_port, updater)
+        status.start
+      end
 
       rd, wr = IO.pipe
       Thread.new do
         # Wait for a signal
         rd.read(1)
         updater.stop
+
+        if status
+          status.stop
+        end
       end
 
       %w(QUIT HUP INT TERM).each do |sig|
@@ -170,6 +185,9 @@ module Dnsync
       end
 
       updater.join
+      if status
+        status.join
+      end
     end
 
     private
