@@ -1,6 +1,6 @@
 # Dnsync
 
-Dnsync provides a simple way to replicate records from [DNSimple] to [NSONE]
+Dnsync provides a simple way to replicate records from [DNSimple] to [NSONE][NSONE]
 (because [DNSimple] does not yet support AXFR for zone transfer). For a domain
 owner, using two different DNS networks is much better DDoS protection than
 relying on any single one.
