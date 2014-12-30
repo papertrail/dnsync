@@ -53,7 +53,7 @@ module Dnsync
           Configlet[:monitor_frequency] = v
         end
         opts.on("--status-port=PORT", "Port to run status HTTP server on") do |v|
-          Configlet[:status_port] = "8008"
+          Configlet[:status_port] = v
         end
         opts.on("--noop", "Don't do any write operations") do |v|
           Configlet[:noop] = v.to_s
