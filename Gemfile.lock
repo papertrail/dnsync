@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dynsync (0.0)
+    dnsync (1.0.0)
       activesupport
       atomic
       configlet
@@ -37,5 +37,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  dynsync!
+  dnsync!
   minitest
