@@ -18,6 +18,26 @@ and use:
 
     $ bundle exec dnsync
 
+## Using
+
+Dnsync can be used to either do one-time synchronization or run in the
+foreground forever, synchronizing every 10 seconds.
+
+
+### Doing a one-time synchronization
+
+To do a one-time synchronization:
+
+    $ dnsync <options> sync
+
+
+### Monitoring a DNSimple zone for changes
+
+To monitor a DNSimple domain for changes and automatically propagate the
+changes to NSONE:
+
+    $ dnsync <options> monitor
+
 
 ## Configuration
 
@@ -85,23 +105,6 @@ To authenticate against NSONE, the command line arguments are:
 ```
 
 Alternatively, the environment variable `DNSYNC_NSONE_TOKEN` is used.
-
-
-## Using
-
-### Doing a one-time synchronization
-
-To do a one-time synchronization:
-
-    $ dnsync --domain=domain.com sync
-
-
-### Monitoring a DNSimple zone for changes
-
-To monitor a DNSimple domain for changes and automatically propagate the
-changes to NSONE:
-
-    $ dnsync --domain=domain.com monitor
 
 
 ## Running on Heroku
