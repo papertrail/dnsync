@@ -1,4 +1,4 @@
-# Ddnsync
+# Dnsync
 
 Dnsync provides a simple way to replicate records from DNSimple to NSONE
 (because DNSimple does not yet support AXFR for zone transfer). For a domain
