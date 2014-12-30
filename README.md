@@ -1,7 +1,7 @@
 # Dnsync
 
-Dnsync provides a simple way to replicate records from DNSimple to NSONE
-(because DNSimple does not yet support AXFR for zone transfer). For a domain
+Dnsync provides a simple way to replicate records from [DNSimple] to [NSONE]
+(because [DNSimple] does not yet support AXFR for zone transfer). For a domain
 owner, using two different DNS networks is much better DDoS protection than
 relying on any single one.
 
@@ -178,3 +178,7 @@ To get a zone dump from DNSimple:
 To get a zone dump from NSONE:
 
     $ dnsync --domain=domain.com dump nsone
+
+
+[DNSimple]: https://dnsimple.com/
+[NSONE]: https://nsone.net/
