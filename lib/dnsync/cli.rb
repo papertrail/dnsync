@@ -24,6 +24,8 @@ module Dnsync
       Configlet.munge(:noop) { |v| v == "true" }
       Configlet.munge(:monitor_frequency) { |v| v.present? ? v.to_i : v }
 
+      Scrolls.single_line_exceptions = true
+
       read_env_from_file(File.expand_path("~/.dnsync.env"))
       read_env_from_file(File.expand_path("../../../.env", __FILE__))
       read_env_from_file('.env')
