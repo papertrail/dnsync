@@ -57,6 +57,13 @@ module Dnsync
       end
       
       Record.new(record['domain'], record['type'], record['ttl'], answers)
+    rescue Faraday::ClientError => ex
+      if ex.response[:status].to_i == 429
+        sleep 0.4 + rand
+        retry
+      else
+        raise
+      end
     end
 
     def create_record(record)

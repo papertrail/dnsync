@@ -14,10 +14,6 @@ module Dnsync
         raise ArgumentError, 'ttl must be provided'
       end
 
-      unless answers.present?
-        raise ArgumentError, 'at least one answer must be provided'
-      end
-      
       @identifier = RecordIdentifier.new(name, type)
       @ttl        = ttl
       @answers    = answers.sort
