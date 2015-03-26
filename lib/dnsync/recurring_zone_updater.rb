@@ -19,7 +19,8 @@ module Dnsync
         return self
       end
 
-      @running.value = true
+      @running.value         = true
+      @last_updated_at.value = Time.now
 
       @thread.value = Thread.new do
         Thread.current.abort_on_exception = true
