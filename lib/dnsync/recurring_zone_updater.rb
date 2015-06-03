@@ -3,15 +3,17 @@ require 'atomic'
 
 module Dnsync
   class RecurringZoneUpdater
-    def initialize(source, destination, frequency)
-      @source      = source
-      @destination = destination
-      @frequency   = frequency
+    def initialize(source, destination, frequency, grace_period)
+      @source       = source
+      @destination  = destination
+      @frequency    = frequency.to_i
+      @grace_period = grace_period.to_i
 
       @thread          = Atomic.new(nil)
       @running         = Atomic.new(false)
       @last_updated_at = Atomic.new(nil)
       @last_exception  = Atomic.new(nil)
+      @failures        = Atomic.new(0)
     end
 
     def start
@@ -50,6 +52,7 @@ module Dnsync
       running   = @running.value
       updated   = last_updated
       exception = @last_exception.value
+      failures  = @failures.value
 
       problems = []
 
@@ -71,7 +74,7 @@ module Dnsync
         problems << "Successful update hasn't occured #{time_description}"
       end
 
-      if exception
+      if exception && failures > @grace_period
         problems << "Last update failed with #{exception.class}: #{exception.message}"
       end
 
@@ -82,7 +85,7 @@ module Dnsync
 
     def recently_updated?(updated = nil)
       updated ||= last_updated
-      updated && updated < (@frequency * 2)
+      updated && updated < (@frequency * @grace_period)
     end
 
     def last_updated
@@ -122,9 +125,11 @@ module Dnsync
           active_zone            = source_zone
           @last_updated_at.value = Time.now
           @last_exception.value  = nil
+          @failures.value        = 0
         rescue => e
           Scrolls.log_exception({ :from => :recurring_zone_updater, :zone => @source.domain }, e)
           @last_exception.value = e
+          @failures.update { |v| v + 1 }
         end
 
         if @running.value

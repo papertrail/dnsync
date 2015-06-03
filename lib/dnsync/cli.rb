@@ -57,6 +57,9 @@ module Dnsync
         opts.on("--status-port=PORT", "Port to run status HTTP server on") do |v|
           Configlet[:status_port] = v
         end
+        opts.on("--status-grace-period=PERIOD", "Number of failed updates before reporting an error") do |v|
+          Configlet[:status_grace_period] = v
+        end
         opts.on("--noop", "Don't do any write operations") do |v|
           Configlet[:noop] = v.to_s
         end
@@ -162,7 +165,8 @@ module Dnsync
         Configlet[:dnsimple_token], Configlet[:domain])
 
       updater = RecurringZoneUpdater.new(dnsimple, nsone,
-        Configlet[:monitor_frequency] || 10)
+        Configlet[:monitor_frequency] || 10,
+        Configlet[:status_grace_period] || 5)
       updater.start
 
       if status_port = Configlet[:status_port]
