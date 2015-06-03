@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'dnsync'
-  s.version           = '1.0.4'
-  s.date              = '2015-03-25'
+  s.version           = '1.0.5'
+  s.date              = '2015-06-03'
 
   ## Make sure your summary is short. The description may be as long
   ## as you like.
